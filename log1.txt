@@ -1,0 +1,27 @@
+URL: /
+Timestamp: Fri Dec 12 2025 12:55:07 GMT+0100 (Central European Standard Time)
+
+URL: /js/server.js
+Timestamp: Fri Dec 12 2025 12:55:07 GMT+0100 (Central European Standard Time)
+
+URL: /favicon.ico
+Timestamp: Fri Dec 12 2025 12:55:07 GMT+0100 (Central European Standard Time)
+
+URL: /index.html
+Timestamp: Fri Dec 12 2025 12:56:45 GMT+0100 (Central European Standard Time)
+
+URL: /js/server.js
+Timestamp: Fri Dec 12 2025 12:56:45 GMT+0100 (Central European Standard Time)
+
+URL: /favicon.ico
+Timestamp: Fri Dec 12 2025 12:56:45 GMT+0100 (Central European Standard Time)
+
+URL: /documentation.html
+Timestamp: Fri Dec 12 2025 12:56:59 GMT+0100 (Central European Standard Time)
+
+URL: /js/server.js
+Timestamp: Fri Dec 12 2025 12:56:59 GMT+0100 (Central European Standard Time)
+
+URL: /favicon.ico
+Timestamp: Fri Dec 12 2025 12:56:59 GMT+0100 (Central European Standard Time)
+
