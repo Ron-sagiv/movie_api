@@ -1,0 +1,29 @@
+{
+  "name": "movie_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ron-sagiv/movie_api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Ron-sagiv/movie_api/issues"
+  },
+  "homepage": "https://github.com/Ron-sagiv/movie_api#readme",
+  "dependencies": {
+    "body-parser": "^2.2.1",
+    "express": "^5.2.1",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.2"
+  }
+}
