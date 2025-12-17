@@ -11,7 +11,7 @@
     "url": "git+https://github.com/Ron-sagiv/movie_api.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ron Sagiv",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
@@ -21,7 +21,8 @@
   "dependencies": {
     "body-parser": "^2.2.1",
     "express": "^5.2.1",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "morgan": "^1.10.1"
   },
   "devDependencies": {
     "eslint": "^9.39.2"
