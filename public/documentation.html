@@ -2,36 +2,347 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Documentation</title>
+    <title>Movie API Documentation</title>
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 40px;
+        background-color: #f9f9f9;
+        color: #333;
+      }
+
+      h1,
+      h2,
+      h3 {
+        color: #2c3e50;
+      }
+
+      .endpoint {
+        background: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+
+      code {
+        background-color: #eee;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      pre {
+        background-color: #f4f4f4;
+        padding: 15px;
+        border-radius: 6px;
+        overflow-x: auto;
+      }
+
+      ul {
+        margin-left: 20px;
+      }
+    </style>
   </head>
   <body>
-    <h1>Movie API</h1>
-    <ul>
-      <li>The API must be a Node.js and Express application.</li>
-      <li>
-        The API must use REST architecture, with URL endpoints corresponding to
-        the data operations listed above
-      </li>
-      <li>
-        The API must use at least three middleware modules, such as the
-        body-parser package for reading data from requests and morgan for
-        logging.
-      </li>
-      <li>The API must use a “package.json” file.</li>
-      <li>The database must be built using MongoDB.</li>
-      <li>The business logic must be modeled with Mongoose.</li>
-      <li>The API must provide movie information in JSON format.</li>
-      <li>The JavaScript code must be error-free.</li>
-      <li>The API must be tested in Postman.</li>
-      <li>The API must include user authentication and authorization code.</li>
-      <li>The API must include data validation logic.</li>
-      <li>The API must meet data security regulations.</li>
-      <li>
-        The API source code must be deployed to a publicly accessible platform
-        like GitHub.
-      </li>
-      <li>The API must be deployed to Heroku.</li>
-    </ul>
+    <h1>Movie API Documentation</h1>
+
+    <p>
+      This API allows users to retrieve movie information and manage user
+      accounts, including registering users, updating profiles, and managing
+      favorite movies.
+    </p>
+
+    <hr />
+
+    <!-- GET ALL MOVIES -->
+    <div class="endpoint">
+      <h2>Get All Movies</h2>
+
+      <p>
+        <strong>Description:</strong> Returns a list of all movies in the
+        database.
+      </p>
+
+      <ul>
+        <li><strong>URL:</strong> <code>/movies</code></li>
+        <li><strong>Method:</strong> GET</li>
+        <li><strong>URL Parameters:</strong> None</li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response Format:</strong> JSON array of movie objects</li>
+      </ul>
+
+      <pre>
+[
+  {
+    "Title": "Inception",
+    "Description": "A mind-bending thriller...",
+    "Genre": { "Name": "Sci-Fi", "Description": "Science fiction movies" },
+    "Director": { "Name": "Christopher Nolan", "Bio": "...", "BirthYear": 1970 },
+    "ImageURL": "http://example.com/inception.jpg",
+    "Featured": true
+  }
+]
+  </pre
+      >
+    </div>
+
+    <!-- GET MOVIE BY TITLE -->
+    <div class="endpoint">
+      <h2>Get Movie by Title</h2>
+
+      <p>
+        <strong>Description:</strong> Returns detailed data about a single movie
+        by title.
+      </p>
+
+      <ul>
+        <li><strong>URL:</strong> <code>/movies/:title</code></li>
+        <li><strong>Method:</strong> GET</li>
+        <li>
+          <strong>URL Parameters:</strong>
+          <ul>
+            <li><code>title</code> – The title of the movie</li>
+          </ul>
+        </li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response Format:</strong> JSON object</li>
+      </ul>
+
+      <pre>
+{
+  "Title": "Inception",
+  "Description": "A mind-bending thriller...",
+  "Genre": { "Name": "Sci-Fi", "Description": "Science fiction movies" },
+  "Director": { "Name": "Christopher Nolan", "Bio": "...", "BirthYear": 1970 },
+  "ImageURL": "http://example.com/inception.jpg",
+  "Featured": true
+}
+  </pre
+      >
+    </div>
+
+    <!-- GET GENRE -->
+    <div class="endpoint">
+      <h2>Get Genre by Name</h2>
+
+      <p><strong>Description:</strong> Returns data about a genre by name.</p>
+
+      <ul>
+        <li><strong>URL:</strong> <code>/movies/genre/:genreName</code></li>
+        <li><strong>Method:</strong> GET</li>
+        <li>
+          <strong>URL Parameters:</strong>
+          <ul>
+            <li><code>genreName</code> – Name of the genre</li>
+          </ul>
+        </li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response Format:</strong> JSON object</li>
+      </ul>
+
+      <pre>
+{
+  "Name": "Thriller",
+  "Description": "Thrilling and suspenseful movies"
+}
+  </pre
+      >
+    </div>
+
+    <!-- GET DIRECTOR -->
+    <div class="endpoint">
+      <h2>Get Director by Name</h2>
+
+      <p>
+        <strong>Description:</strong> Returns data about a director by name.
+      </p>
+
+      <ul>
+        <li>
+          <strong>URL:</strong> <code>/movies/director/:directorName</code>
+        </li>
+        <li><strong>Method:</strong> GET</li>
+        <li>
+          <strong>URL Parameters:</strong>
+          <ul>
+            <li><code>directorName</code> – Name of the director</li>
+          </ul>
+        </li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response Format:</strong> JSON object</li>
+      </ul>
+
+      <pre>
+{
+  "Name": "Christopher Nolan",
+  "Bio": "British-American film director...",
+  "BirthYear": 1970,
+  "DeathYear": null
+}
+  </pre
+      >
+    </div>
+
+    <!-- REGISTER USER -->
+    <div class="endpoint">
+      <h2>Register New User</h2>
+
+      <p><strong>Description:</strong> Allows a new user to register.</p>
+
+      <ul>
+        <li><strong>URL:</strong> <code>/users</code></li>
+        <li><strong>Method:</strong> POST</li>
+        <li><strong>URL Parameters:</strong> None</li>
+        <li><strong>Request Body:</strong> JSON object</li>
+        <li><strong>Response Format:</strong> JSON object</li>
+      </ul>
+
+      <pre>
+Request Body Example:
+{
+  "name": "john_doe",
+  "favoriteMovies": []
+}
+  </pre
+      >
+
+      <pre>
+Response Example:
+{
+  "id": "uuid-value",
+  "name": "john_doe",
+  "favoriteMovies": []
+}
+  </pre
+      >
+    </div>
+
+    <!-- UPDATE USER -->
+    <div class="endpoint">
+      <h2>Update User Name</h2>
+
+      <p><strong>Description:</strong> Updates an existing user's name.</p>
+
+      <ul>
+        <li><strong>URL:</strong> <code>/users/:id</code></li>
+        <li><strong>Method:</strong> PUT</li>
+        <li>
+          <strong>URL Parameters:</strong>
+          <ul>
+            <li><code>id</code> – User ID</li>
+          </ul>
+        </li>
+        <li><strong>Request Body:</strong> JSON object</li>
+        <li><strong>Response Format:</strong> JSON object</li>
+      </ul>
+
+      <pre>
+Request Body Example:
+{
+  "name": "new_username"
+}
+  </pre
+      >
+    </div>
+
+    <!-- ADD FAVORITE MOVIE-->
+    <div class="endpoint">
+      <h2>Add Favorite Movie</h2>
+
+      <p>
+        <strong>Description:</strong> Adds a movie to a user's list of favorite
+        movies.
+      </p>
+
+      <ul>
+        <li><strong>URL:</strong> <code>/users/:id/:movieTitle</code></li>
+        <li><strong>Method:</strong> POST</li>
+        <li>
+          <strong>URL Parameters:</strong>
+          <ul>
+            <li><code>id</code> – User ID</li>
+            <li><code>movieTitle</code> – Movie title</li>
+          </ul>
+        </li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response Format:</strong> Text message</li>
+      </ul>
+      <pre>
+Example Request:
+POST /users/12345/Inception
+</pre
+      >
+
+      <pre>
+Response Example:
+"Inception has been added to user 12345's array"
+</pre
+      >
+    </div>
+
+    <!-- REMOVE FAVORITE -->
+    <div class="endpoint">
+      <h2>Remove Favorite Movie</h2>
+
+      <p>
+        <strong>Description:</strong> Removes a movie from a user's favorites.
+      </p>
+
+      <ul>
+        <li><strong>URL:</strong> <code>/users/:id/:movieTitle</code></li>
+        <li><strong>Method:</strong> DELETE</li>
+        <li>
+          <strong>URL Parameters:</strong>
+          <ul>
+            <li><code>id</code> – User ID</li>
+            <li><code>movieTitle</code> – Movie title</li>
+          </ul>
+        </li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response Format:</strong> Text message</li>
+      </ul>
+      <pre>
+Example Request:
+DELETE /users/12345/Inception
+</pre
+      >
+
+      <pre>
+Response Example:
+"Inception has been removed from user 12345's array"
+</pre
+      >
+    </div>
+
+    <!-- DELETE USER -->
+    <div class="endpoint">
+      <h2>Deregister User</h2>
+
+      <p><strong>Description:</strong> Deletes an existing user account.</p>
+
+      <ul>
+        <li><strong>URL:</strong> <code>/users/:id</code></li>
+        <li><strong>Method:</strong> DELETE</li>
+        <li>
+          <strong>URL Parameters:</strong>
+          <ul>
+            <li><code>id</code> – User ID</li>
+          </ul>
+        </li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response Format:</strong> Text message</li>
+      </ul>
+      <pre>
+Example Request:
+DELETE /users/12345
+</pre
+      >
+
+      <pre>
+Response Example:
+"user 12345 has been deleted"
+</pre
+      >
+    </div>
   </body>
 </html>
