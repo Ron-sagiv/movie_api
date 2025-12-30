@@ -7,62 +7,84 @@ const app = express();
 app.use(bodyParser.json());
 app.use(morgan('common'));
 
+/* ================= MOVIES DATA ================= */
+
 let movies = [
   {
     title: 'The Dark Knight',
     director: { name: 'Christopher Nolan' },
     released: 2008,
     genre: { name: 'action' },
+
+    actors: ['Christian Bale', 'Heath Ledger', 'Gary Oldman'],
   },
   {
     title: 'The Godfather',
     director: { name: 'Francis Ford Coppola' },
     released: 1972,
     genre: { name: 'crime' },
+
+    actors: ['Marlon Brando', 'Al Pacino'],
   },
   {
     title: 'The Shawshenk Redemption',
     director: { name: 'Frank Darabont' },
     released: 1994,
     genre: { name: 'thriller' },
+
+    actors: ['Tim Robbins', 'Morgan Freeman'],
   },
   {
     title: 'The Lord of the Rings: The Return of the King',
     director: { name: 'Peter Jackson' },
     released: 2003,
     genre: { name: 'fantasy' },
+
+    actors: ['Elijah Wood', 'Viggo Mortensen'],
   },
   {
     title: 'Goodfellas',
     director: { name: 'Martin Scorsese' },
     released: 1990,
     genre: { name: 'crime' },
+
+    actors: ['Robert De Niro', 'Ray Liotta'],
   },
   {
     title: 'The Matrix',
     director: { name: 'Wachowski sisters' },
     released: 1999,
     genre: { name: 'sci-fi' },
+
+    actors: ['Keanu Reeves', 'Laurence Fishburne'],
   },
   {
     title: 'The Green Mile',
     director: { name: 'Frank Darabont' },
     released: 1999,
     genre: { name: 'crime' },
+
+    actors: ['Tom Hanks', 'Michael Clarke Duncan'],
   },
   {
     title: 'Léon: The Professional',
     director: { name: 'Luc Besson' },
     released: 1994,
     genre: { name: 'action' },
+
+    actors: ['Jean Reno', 'Natalie Portman'],
   },
   {
     title: 'the Skipper',
     director: { name: 'Jacob Goldwasser' },
     released: 1987,
     genre: { name: 'drama' },
+
+    actors: ['Yehuda Barkan'],
   },
 ];
+
+/* ================= USERS ================= */
 
 let users = [
   {
@@ -85,9 +107,8 @@ app.get('/', (req, res) => {
   res.json({ msg: 'Welcome to my movie app!' });
 });
 
-/* ================= USERS ================= */
+/* ================= USERS ROUTES ================= */
 
-// create user
 app.post('/users', (req, res) => {
   const newUser = req.body;
 
@@ -101,7 +122,6 @@ app.post('/users', (req, res) => {
   }
 });
 
-// update user
 app.put('/users/:id', (req, res) => {
   const { id } = req.params;
   const updatedUser = req.body;
@@ -116,7 +136,6 @@ app.put('/users/:id', (req, res) => {
   }
 });
 
-// add favorite movie
 app.post('/users/:id/:movieTitle', (req, res) => {
   const { id, movieTitle } = req.params;
   let user = users.find((user) => user.id == id);
@@ -129,7 +148,6 @@ app.post('/users/:id/:movieTitle', (req, res) => {
   }
 });
 
-// delete favorite movie
 app.delete('/users/:id/:movieTitle', (req, res) => {
   const { id, movieTitle } = req.params;
   let user = users.find((user) => user.id == id);
@@ -144,7 +162,6 @@ app.delete('/users/:id/:movieTitle', (req, res) => {
   }
 });
 
-// delete user
 app.delete('/users/:id', (req, res) => {
   const { id } = req.params;
   let user = users.find((user) => user.id == id);
@@ -157,14 +174,12 @@ app.delete('/users/:id', (req, res) => {
   }
 });
 
-/* ================= MOVIES ================= */
+/* ================= MOVIES ROUTES ================= */
 
-// get all movies
 app.get('/movies', (req, res) => {
   res.status(200).json(movies);
 });
 
-// get genre
 app.get('/movies/genre/:genreName', (req, res) => {
   const { genreName } = req.params;
 
@@ -179,7 +194,6 @@ app.get('/movies/genre/:genreName', (req, res) => {
   res.status(200).json(movie.genre);
 });
 
-// get director
 app.get('/movies/director/:directorName', (req, res) => {
   const { directorName } = req.params;
 
@@ -192,6 +206,27 @@ app.get('/movies/director/:directorName', (req, res) => {
   }
 
   res.status(200).json(movie.director);
+});
+
+/* ================= ACTORS (NEW ENDPOINT) ================= */
+
+app.get('/movies/actors/:actorName', (req, res) => {
+  const { actorName } = req.params;
+
+  const actorMovies = movies.filter((movie) =>
+    movie.actors.some(
+      (actor) => actor.toLowerCase() === actorName.toLowerCase()
+    )
+  );
+
+  if (actorMovies.length === 0) {
+    return res.status(404).send('no such actor');
+  }
+
+  res.status(200).json({
+    actor: actorName,
+    movies: actorMovies.map((movie) => movie.title),
+  });
 });
 
 app.get('/movies/:title', (req, res) => {
