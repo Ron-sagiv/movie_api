@@ -47,22 +47,18 @@
     <h1>Movie API Documentation</h1>
 
     <p>
-      This API allows users to retrieve movie information and manage user
-      accounts, including registering users, updating profiles, and managing
-      favorite movies.
+      This API provides access to movie data and user data. Users can register,
+      update their profiles, manage favorite movies, and retrieve information
+      about movies, genres, directors, and actors.
     </p>
 
     <hr />
 
-    <!-- GET ALL MOVIES -->
+    <!-- ================= MOVIES ================= -->
+
     <div class="endpoint">
       <h2>Get All Movies</h2>
-
-      <p>
-        <strong>Description:</strong> Returns a list of all movies in the
-        database.
-      </p>
-
+      <p><strong>Description:</strong> Returns a list of all movies.</p>
       <ul>
         <li><strong>URL:</strong> <code>/movies</code></li>
         <li><strong>Method:</strong> GET</li>
@@ -70,102 +66,91 @@
         <li><strong>Request Body:</strong> None</li>
         <li><strong>Response Format:</strong> JSON array of movie objects</li>
       </ul>
-
-      <pre>
-[
-  {
-    "Title": "Inception",
-    "Description": "A mind-bending thriller...",
-    "Genre": { "Name": "Sci-Fi", "Description": "Science fiction movies" },
-    "Director": { "Name": "Christopher Nolan", "Bio": "...", "BirthYear": 1970 },
-    "ImageURL": "http://example.com/inception.jpg",
-    "Featured": true
-  }
-]
-  </pre
-      >
     </div>
 
-    <!-- GET MOVIE BY TITLE -->
     <div class="endpoint">
       <h2>Get Movie by Title</h2>
-
       <p>
-        <strong>Description:</strong> Returns detailed data about a single movie
-        by title.
+        <strong>Description:</strong> Returns detailed data about a movie by
+        title.
       </p>
-
       <ul>
         <li><strong>URL:</strong> <code>/movies/:title</code></li>
         <li><strong>Method:</strong> GET</li>
-        <li>
-          <strong>URL Parameters:</strong>
-          <ul>
-            <li><code>title</code> – The title of the movie</li>
-          </ul>
-        </li>
+        <li><strong>URL Parameters:</strong> <code>title</code></li>
         <li><strong>Request Body:</strong> None</li>
         <li><strong>Response Format:</strong> JSON object</li>
       </ul>
 
       <pre>
 {
-  "Title": "Inception",
-  "Description": "A mind-bending thriller...",
-  "Genre": { "Name": "Sci-Fi", "Description": "Science fiction movies" },
-  "Director": { "Name": "Christopher Nolan", "Bio": "...", "BirthYear": 1970 },
-  "ImageURL": "http://example.com/inception.jpg",
-  "Featured": true
+  "title": "The Matrix",
+  "director": { "name": "Wachowski sisters" },
+  "released": 1999,
+  "genre": { "name": "sci-fi" },
+  "actors": ["Keanu Reeves", "Laurence Fishburne"]
 }
   </pre
       >
     </div>
 
-    <!-- GET GENRE -->
     <div class="endpoint">
       <h2>Get Genre by Name</h2>
-
-      <p><strong>Description:</strong> Returns data about a genre by name.</p>
-
+      <p><strong>Description:</strong> Returns genre data by name.</p>
       <ul>
         <li><strong>URL:</strong> <code>/movies/genre/:genreName</code></li>
         <li><strong>Method:</strong> GET</li>
-        <li>
-          <strong>URL Parameters:</strong>
-          <ul>
-            <li><code>genreName</code> – Name of the genre</li>
-          </ul>
-        </li>
+        <li><strong>URL Parameters:</strong> <code>genreName</code></li>
         <li><strong>Request Body:</strong> None</li>
         <li><strong>Response Format:</strong> JSON object</li>
       </ul>
 
       <pre>
 {
-  "Name": "Thriller",
-  "Description": "Thrilling and suspenseful movies"
+  "name": "crime"
 }
   </pre
       >
     </div>
 
-    <!-- GET DIRECTOR -->
     <div class="endpoint">
       <h2>Get Director by Name</h2>
-
-      <p>
-        <strong>Description:</strong> Returns data about a director by name.
-      </p>
-
+      <p><strong>Description:</strong> Returns director data by name.</p>
       <ul>
         <li>
           <strong>URL:</strong> <code>/movies/director/:directorName</code>
         </li>
         <li><strong>Method:</strong> GET</li>
+        <li><strong>URL Parameters:</strong> <code>directorName</code></li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response Format:</strong> JSON object</li>
+      </ul>
+
+      <pre>
+{
+  "name": "Christopher Nolan"
+}
+  </pre
+      >
+    </div>
+
+    <!-- ================= ACTORS ================= -->
+
+    <div class="endpoint">
+      <h2>Get Movies by Actor</h2>
+
+      <p>
+        <strong>Description:</strong>
+        Returns a list of movies in which a specific actor has appeared.
+      </p>
+
+      <ul>
+        <li><strong>URL:</strong> <code>/movies/actors/:actorName</code></li>
+        <li><strong>Method:</strong> GET</li>
         <li>
           <strong>URL Parameters:</strong>
           <ul>
-            <li><code>directorName</code> – Name of the director</li>
+            <li><code>actorName</code> – Name of the actor</li>
           </ul>
         </li>
         <li><strong>Request Body:</strong> None</li>
@@ -173,22 +158,26 @@
       </ul>
 
       <pre>
+Example Request:
+GET /movies/actors/Keanu Reeves
+  </pre
+      >
+
+      <pre>
+Response Example:
 {
-  "Name": "Christopher Nolan",
-  "Bio": "British-American film director...",
-  "BirthYear": 1970,
-  "DeathYear": null
+  "actor": "Keanu Reeves",
+  "movies": ["The Matrix"]
 }
   </pre
       >
     </div>
 
-    <!-- REGISTER USER -->
+    <!-- ================= USERS ================= -->
+
     <div class="endpoint">
       <h2>Register New User</h2>
-
-      <p><strong>Description:</strong> Allows a new user to register.</p>
-
+      <p><strong>Description:</strong> Registers a new user.</p>
       <ul>
         <li><strong>URL:</strong> <code>/users</code></li>
         <li><strong>Method:</strong> POST</li>
@@ -200,149 +189,78 @@
       <pre>
 Request Body Example:
 {
-  "name": "john_doe",
-  "favoriteMovies": []
-}
-  </pre
-      >
-
-      <pre>
-Response Example:
-{
-  "id": "uuid-value",
-  "name": "john_doe",
-  "favoriteMovies": []
+  "name": "John Doe",
+  "email": "john@example.com"
 }
   </pre
       >
     </div>
 
-    <!-- UPDATE USER -->
     <div class="endpoint">
       <h2>Update User Name</h2>
-
-      <p><strong>Description:</strong> Updates an existing user's name.</p>
-
+      <p><strong>Description:</strong> Updates a user's name.</p>
       <ul>
         <li><strong>URL:</strong> <code>/users/:id</code></li>
         <li><strong>Method:</strong> PUT</li>
-        <li>
-          <strong>URL Parameters:</strong>
-          <ul>
-            <li><code>id</code> – User ID</li>
-          </ul>
-        </li>
+        <li><strong>URL Parameters:</strong> <code>id</code></li>
         <li><strong>Request Body:</strong> JSON object</li>
         <li><strong>Response Format:</strong> JSON object</li>
       </ul>
 
       <pre>
-Request Body Example:
 {
-  "name": "new_username"
+  "name": "New Name"
 }
   </pre
       >
     </div>
 
-    <!-- ADD FAVORITE MOVIE-->
     <div class="endpoint">
       <h2>Add Favorite Movie</h2>
-
-      <p>
-        <strong>Description:</strong> Adds a movie to a user's list of favorite
-        movies.
-      </p>
-
+      <p><strong>Description:</strong> Adds a movie to a user's favorites.</p>
       <ul>
         <li><strong>URL:</strong> <code>/users/:id/:movieTitle</code></li>
         <li><strong>Method:</strong> POST</li>
         <li>
-          <strong>URL Parameters:</strong>
-          <ul>
-            <li><code>id</code> – User ID</li>
-            <li><code>movieTitle</code> – Movie title</li>
-          </ul>
+          <strong>URL Parameters:</strong> <code>id</code>,
+          <code>movieTitle</code>
         </li>
         <li><strong>Request Body:</strong> None</li>
-        <li><strong>Response Format:</strong> Text message</li>
+        <li><strong>Response Format:</strong> Text</li>
       </ul>
-      <pre>
-Example Request:
-POST /users/12345/Inception
-</pre
-      >
 
       <pre>
-Response Example:
-"Inception has been added to user 12345's array"
-</pre
+Example Response:
+"The Matrix added to user 1"
+  </pre
       >
     </div>
 
-    <!-- REMOVE FAVORITE -->
     <div class="endpoint">
       <h2>Remove Favorite Movie</h2>
-
-      <p>
-        <strong>Description:</strong> Removes a movie from a user's favorites.
-      </p>
-
+      <p><strong>Description:</strong> Removes a movie from favorites.</p>
       <ul>
         <li><strong>URL:</strong> <code>/users/:id/:movieTitle</code></li>
         <li><strong>Method:</strong> DELETE</li>
         <li>
-          <strong>URL Parameters:</strong>
-          <ul>
-            <li><code>id</code> – User ID</li>
-            <li><code>movieTitle</code> – Movie title</li>
-          </ul>
+          <strong>URL Parameters:</strong> <code>id</code>,
+          <code>movieTitle</code>
         </li>
         <li><strong>Request Body:</strong> None</li>
-        <li><strong>Response Format:</strong> Text message</li>
+        <li><strong>Response Format:</strong> Text</li>
       </ul>
-      <pre>
-Example Request:
-DELETE /users/12345/Inception
-</pre
-      >
-
-      <pre>
-Response Example:
-"Inception has been removed from user 12345's array"
-</pre
-      >
     </div>
 
-    <!-- DELETE USER -->
     <div class="endpoint">
       <h2>Deregister User</h2>
-
-      <p><strong>Description:</strong> Deletes an existing user account.</p>
-
+      <p><strong>Description:</strong> Deletes a user account.</p>
       <ul>
         <li><strong>URL:</strong> <code>/users/:id</code></li>
         <li><strong>Method:</strong> DELETE</li>
-        <li>
-          <strong>URL Parameters:</strong>
-          <ul>
-            <li><code>id</code> – User ID</li>
-          </ul>
-        </li>
+        <li><strong>URL Parameters:</strong> <code>id</code></li>
         <li><strong>Request Body:</strong> None</li>
-        <li><strong>Response Format:</strong> Text message</li>
+        <li><strong>Response Format:</strong> Text</li>
       </ul>
-      <pre>
-Example Request:
-DELETE /users/12345
-</pre
-      >
-
-      <pre>
-Response Example:
-"user 12345 has been deleted"
-</pre
-      >
     </div>
   </body>
 </html>
