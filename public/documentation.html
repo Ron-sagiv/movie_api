@@ -47,9 +47,10 @@
     <h1>Movie API Documentation</h1>
 
     <p>
-      This API provides access to movie data and user data. Users can register,
-      update their profiles, manage favorite movies, and retrieve information
-      about movies, genres, directors, and actors.
+      This API provides access to movie and user data using MongoDB and
+      Mongoose. Users can register, update their profiles, manage favorite
+      movies, and retrieve information about movies, genres, directors, and
+      actors.
     </p>
 
     <hr />
@@ -64,16 +65,13 @@
         <li><strong>Method:</strong> GET</li>
         <li><strong>URL Parameters:</strong> None</li>
         <li><strong>Request Body:</strong> None</li>
-        <li><strong>Response Format:</strong> JSON array of movie objects</li>
+        <li><strong>Response Format:</strong> JSON array</li>
       </ul>
     </div>
 
     <div class="endpoint">
       <h2>Get Movie by Title</h2>
-      <p>
-        <strong>Description:</strong> Returns detailed data about a movie by
-        title.
-      </p>
+      <p><strong>Description:</strong> Returns detailed data about a movie.</p>
       <ul>
         <li><strong>URL:</strong> <code>/movies/:title</code></li>
         <li><strong>Method:</strong> GET</li>
@@ -85,18 +83,23 @@
       <pre>
 {
   "title": "The Matrix",
-  "director": { "name": "Wachowski sisters" },
-  "released": 1999,
-  "genre": { "name": "sci-fi" },
-  "actors": ["Keanu Reeves", "Laurence Fishburne"]
+  "description": "A hacker discovers reality is a simulation.",
+  "genre": {
+    "name": "Sci-Fi",
+    "description": "Science fiction films"
+  },
+  "director": {
+    "name": "Wachowski Sisters"
+  },
+  "actors": ["Keanu Reeves", "Laurence Fishburne"],
+  "releaseYear": 1999
 }
-  </pre
-      >
+      </pre>
     </div>
 
     <div class="endpoint">
       <h2>Get Genre by Name</h2>
-      <p><strong>Description:</strong> Returns genre data by name.</p>
+      <p><strong>Description:</strong> Returns genre information.</p>
       <ul>
         <li><strong>URL:</strong> <code>/movies/genre/:genreName</code></li>
         <li><strong>Method:</strong> GET</li>
@@ -104,18 +107,11 @@
         <li><strong>Request Body:</strong> None</li>
         <li><strong>Response Format:</strong> JSON object</li>
       </ul>
-
-      <pre>
-{
-  "name": "crime"
-}
-  </pre
-      >
     </div>
 
     <div class="endpoint">
       <h2>Get Director by Name</h2>
-      <p><strong>Description:</strong> Returns director data by name.</p>
+      <p><strong>Description:</strong> Returns director information.</p>
       <ul>
         <li>
           <strong>URL:</strong> <code>/movies/director/:directorName</code>
@@ -125,52 +121,30 @@
         <li><strong>Request Body:</strong> None</li>
         <li><strong>Response Format:</strong> JSON object</li>
       </ul>
-
-      <pre>
-{
-  "name": "Christopher Nolan"
-}
-  </pre
-      >
     </div>
 
     <!-- ================= ACTORS ================= -->
 
     <div class="endpoint">
       <h2>Get Movies by Actor</h2>
-
       <p>
         <strong>Description:</strong>
-        Returns a list of movies in which a specific actor has appeared.
+        Returns all movies featuring a given actor.
       </p>
-
       <ul>
         <li><strong>URL:</strong> <code>/movies/actors/:actorName</code></li>
         <li><strong>Method:</strong> GET</li>
-        <li>
-          <strong>URL Parameters:</strong>
-          <ul>
-            <li><code>actorName</code> – Name of the actor</li>
-          </ul>
-        </li>
+        <li><strong>URL Parameters:</strong> <code>actorName</code></li>
         <li><strong>Request Body:</strong> None</li>
         <li><strong>Response Format:</strong> JSON object</li>
       </ul>
 
       <pre>
-Example Request:
-GET /movies/actors/Keanu Reeves
-  </pre
-      >
-
-      <pre>
-Response Example:
 {
   "actor": "Keanu Reeves",
-  "movies": ["The Matrix"]
+  "movies": ["The Matrix", "John Wick"]
 }
-  </pre
-      >
+      </pre>
     </div>
 
     <!-- ================= USERS ================= -->
@@ -181,84 +155,77 @@ Response Example:
       <ul>
         <li><strong>URL:</strong> <code>/users</code></li>
         <li><strong>Method:</strong> POST</li>
-        <li><strong>URL Parameters:</strong> None</li>
         <li><strong>Request Body:</strong> JSON object</li>
         <li><strong>Response Format:</strong> JSON object</li>
       </ul>
 
       <pre>
-Request Body Example:
 {
-  "name": "John Doe",
-  "email": "john@example.com"
+  "userName": "johnDoe",
+  "password": "password123",
+  "email": "john@example.com",
+  "birthday": "1990-01-01"
 }
-  </pre
-      >
+      </pre>
     </div>
 
     <div class="endpoint">
-      <h2>Update User Name</h2>
-      <p><strong>Description:</strong> Updates a user's name.</p>
+      <h2>Get All Users</h2>
       <ul>
-        <li><strong>URL:</strong> <code>/users/:id</code></li>
+        <li><strong>URL:</strong> <code>/users</code></li>
+        <li><strong>Method:</strong> GET</li>
+        <li><strong>Response Format:</strong> JSON array</li>
+      </ul>
+    </div>
+
+    <div class="endpoint">
+      <h2>Get User by Username</h2>
+      <ul>
+        <li><strong>URL:</strong> <code>/users/:userName</code></li>
+        <li><strong>Method:</strong> GET</li>
+        <li><strong>URL Parameters:</strong> <code>userName</code></li>
+        <li><strong>Response Format:</strong> JSON object</li>
+      </ul>
+    </div>
+
+    <div class="endpoint">
+      <h2>Update User Profile</h2>
+      <ul>
+        <li><strong>URL:</strong> <code>/users/:userName</code></li>
         <li><strong>Method:</strong> PUT</li>
-        <li><strong>URL Parameters:</strong> <code>id</code></li>
+        <li><strong>URL Parameters:</strong> <code>userName</code></li>
         <li><strong>Request Body:</strong> JSON object</li>
         <li><strong>Response Format:</strong> JSON object</li>
       </ul>
-
-      <pre>
-{
-  "name": "New Name"
-}
-  </pre
-      >
     </div>
 
     <div class="endpoint">
       <h2>Add Favorite Movie</h2>
-      <p><strong>Description:</strong> Adds a movie to a user's favorites.</p>
       <ul>
-        <li><strong>URL:</strong> <code>/users/:id/:movieTitle</code></li>
-        <li><strong>Method:</strong> POST</li>
         <li>
-          <strong>URL Parameters:</strong> <code>id</code>,
-          <code>movieTitle</code>
+          <strong>URL:</strong> <code>/users/:userName/movies/:MovieID</code>
         </li>
-        <li><strong>Request Body:</strong> None</li>
-        <li><strong>Response Format:</strong> Text</li>
+        <li><strong>Method:</strong> POST</li>
+        <li><strong>Response Format:</strong> JSON object</li>
       </ul>
-
-      <pre>
-Example Response:
-"The Matrix added to user 1"
-  </pre
-      >
     </div>
 
     <div class="endpoint">
       <h2>Remove Favorite Movie</h2>
-      <p><strong>Description:</strong> Removes a movie from favorites.</p>
       <ul>
-        <li><strong>URL:</strong> <code>/users/:id/:movieTitle</code></li>
-        <li><strong>Method:</strong> DELETE</li>
         <li>
-          <strong>URL Parameters:</strong> <code>id</code>,
-          <code>movieTitle</code>
+          <strong>URL:</strong> <code>/users/:userName/movies/:movieId</code>
         </li>
-        <li><strong>Request Body:</strong> None</li>
-        <li><strong>Response Format:</strong> Text</li>
+        <li><strong>Method:</strong> DELETE</li>
+        <li><strong>Response Format:</strong> JSON object</li>
       </ul>
     </div>
 
     <div class="endpoint">
-      <h2>Deregister User</h2>
-      <p><strong>Description:</strong> Deletes a user account.</p>
+      <h2>Delete User</h2>
       <ul>
-        <li><strong>URL:</strong> <code>/users/:id</code></li>
+        <li><strong>URL:</strong> <code>/users/:userName</code></li>
         <li><strong>Method:</strong> DELETE</li>
-        <li><strong>URL Parameters:</strong> <code>id</code></li>
-        <li><strong>Request Body:</strong> None</li>
         <li><strong>Response Format:</strong> Text</li>
       </ul>
     </div>
