@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 /* =========================
    Movie Schema
@@ -119,92 +120,15 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+//===Does this supposed to be here?=============================
+//=========================================================
+userSchema.statics.hashPassword = (password) => {
+  return bcrypt.hashSync(password, 10);
+};
 
-/* =========================
-   Genre Schema
-========================= */
-
-const genreSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
-
-    description: {
-      type: String,
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
-
-/* =========================
-   Actor Schema
-========================= */
-
-const actorSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
-
-    bio: {
-      type: String,
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
-
-/* =========================
-   Director Schema
-========================= */
-
-const directorSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
-
-    bio: {
-      type: String,
-      required: true,
-    },
-
-    birthYear: {
-      type: Date,
-      required: true,
-    },
-
-    deathYear: {
-      type: Date,
-      default: null,
-    },
-
-    movies: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Movie',
-      },
-    ],
-  },
-  {
-    timestamps: true,
-  }
-);
+userSchema.methods.validatePassword = function (password) {
+  return bcrypt.compareSync(password, this.password);
+};
 
 /* =========================
    Models
@@ -212,7 +136,4 @@ const directorSchema = new mongoose.Schema(
 
 const Movie = mongoose.model('Movie', movieSchema);
 const User = mongoose.model('User', userSchema);
-const Genre = mongoose.model('Genre', genreSchema);
-const Actor = mongoose.model('Actor', actorSchema);
-const Director = mongoose.model('Director', directorSchema);
-module.exports = { Movie, User, Genre, Actor, Director };
+module.exports = { Movie, User };

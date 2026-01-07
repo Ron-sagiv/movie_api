@@ -3,6 +3,7 @@ const express = require('express'),
   bodyParser = require('body-parser'),
   mongoose = require('mongoose'),
   Models = require('./models.js');
+const { check, validationResult } = require('express-validator');
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -20,7 +21,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('common'));
 app.use(express.static('public'));
-//2.9
+
+const cors = require('cors');
+app.use(cors());
+//===============================================================
+//====not sure if to use at the moment (check the websites in the first row)=========
+//================use instead of the row above:app.use(cors());=========
+// let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
+
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     if(!origin) return callback(null, true);
+//     if(allowedOrigins.indexOf(origin) === -1){
+//       let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
+//       return callback(new Error(message ), false);
+//     }
+//     return callback(null, true);
+//   }
+// }));
+//====================end of defining origins code
 let auth = require('./auth')(app); //import auth.js file
 const passport = require('passport');
 //-----------------
@@ -52,32 +71,58 @@ mongoose.connection.on('disconnected', () => {
   email: String,
   birthday: Date
 }*/
-app.post('/users', async (req, res) => {
-  await Users.findOne({ userName: req.body.userName })
-    .then((user) => {
-      if (user) {
-        return res.status(400).send(req.body.userName + ' already exists');
-      } else {
-        Users.create({
-          userName: req.body.userName,
-          password: req.body.password,
-          email: req.body.email,
-          birthday: req.body.birthday,
-        })
-          .then((user) => {
-            res.status(201).json(user);
+app.post(
+  '/users',
+  // Validation logic here for request
+  //you can either use a chain of methods like .not().isEmpty()
+  //which means "opposite of isEmpty" in plain english "is not empty"
+  //or use .isLength({min: 5}) which means
+  //minimum value of 5 characters are only allowed
+  [
+    check('userName', 'userName is required').isLength({ min: 5 }),
+    check(
+      'userName',
+      'userName contains non alphanumeric characters - not allowed.'
+    ).isAlphanumeric(),
+    check('password', 'password is required').not().isEmpty(),
+    check('email', 'Email does not appear to be valid').isEmail(),
+  ],
+  async (req, res) => {
+    // check the validation object for errors
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    let hashedPassword = Users.hashPassword(req.body.password);
+    await Users.findOne({ userName: req.body.userName }) // Search to see if a user with the requested username already exists
+      .then((user) => {
+        if (user) {
+          //If the user is found, send a response that it already exists
+          return res.status(400).send(req.body.userName + ' already exists');
+        } else {
+          Users.create({
+            userName: req.body.userName,
+            password: hashedPassword,
+            email: req.body.email,
+            birthday: req.body.birthday,
           })
-          .catch((error) => {
-            console.error(error);
-            res.status(500).send('Error: ' + error);
-          });
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).send('Error: ' + error);
-    });
-});
+            .then((user) => {
+              res.status(201).json(user);
+            })
+            .catch((error) => {
+              console.error(error);
+              res.status(500).send('Error: ' + error);
+            });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send('Error: ' + error);
+      });
+  }
+);
 
 // ---------------Get all users---NEW-------------
 app.get(
@@ -115,59 +160,80 @@ app.get(
 app.put(
   '/users/:userName',
   passport.authenticate('jwt', { session: false }),
+
+  [
+    check('userName', 'userName is required').isLength({ min: 5 }),
+    check(
+      'userName',
+      'userName contains non alphanumeric characters - not allowed.'
+    ).isAlphanumeric(),
+    check('password', 'password is required').not().isEmpty(),
+    check('email', 'Email does not appear to be valid').isEmail(),
+  ],
+
   async (req, res) => {
-    // CONDITION TO CHECK ADDED HERE
     if (req.user.userName !== req.params.userName) {
       return res.status(400).send('Permission denied');
     }
-    // CONDITION ENDS
-    await Users.findOneAndUpdate(
-      { userName: req.params.userName },
-      {
-        $set: {
-          userName: req.body.userName,
-          password: req.body.password,
-          email: req.body.email,
-          birthday: req.body.birthday,
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    try {
+      const hashedPassword = Users.hashPassword(req.body.password);
+
+      const updatedUser = await Users.findOneAndUpdate(
+        { userName: req.params.userName },
+        {
+          $set: {
+            userName: req.body.userName,
+            password: hashedPassword,
+            email: req.body.email,
+            birthday: req.body.birthday, // keep schema casing consistent
+          },
         },
-      },
-      { new: true }
-    )
-      .then((updatedUser) => {
-        res.json(updatedUser);
-      })
-      .catch((err) => {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-      });
+        { new: true }
+      );
+
+      if (!updatedUser) {
+        return res.status(404).send('User not found');
+      }
+
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error: ' + error);
+    }
   }
 );
 
 ///------------------------------------------------------------
 
 ///  replacement for PUT /users/:id -------NEW-----
-app.put(
-  '/users/id/:id',
-  passport.authenticate('jwt', { session: false }),
-  async (req, res) => {
-    // CONDITION TO CHECK ADDED HERE
-    if (req.user.userName !== req.params.userName) {
-      return res.status(400).send('Permission denied');
-    }
-    // CONDITION ENDS
-    await Users.findByIdAndUpdate(req.params.id, req.body, { new: true })
-      .then((updatedUser) => {
-        if (!updatedUser) {
-          return res.status(404).send('no such user');
-        }
-        res.status(200).json(updatedUser);
-      })
-      .catch((err) => {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-      });
-  }
-);
+// app.put(
+//   '/users/id/:id',
+//   passport.authenticate('jwt', { session: false }),
+//   async (req, res) => {
+//     // CONDITION TO CHECK ADDED HERE
+//     if (req.user.userName !== req.params.userName) {
+//       return res.status(400).send('Permission denied');
+//     }
+//     // CONDITION ENDS
+//     await Users.findByIdAndUpdate(req.params.id, req.body, { new: true })
+//       .then((updatedUser) => {
+//         if (!updatedUser) {
+//           return res.status(404).send('no such user');
+//         }
+//         res.status(200).json(updatedUser);
+//       })
+//       .catch((err) => {
+//         console.error(err);
+//         res.status(500).send('Error: ' + err);
+//       });
+//   }
+// );
 
 // Add a movie to a user's list of favorites----new----------------
 app.post(
@@ -276,59 +342,43 @@ app.get(
   }
 );
 
-// -----------get genre by genre name--------------
+// -----------get Movies by genre name--------------
 app.get(
   '/movies/genre/:genreName',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    await Movies.findOne({ 'genre.name': req.params.genreName })
-      .then((movie) => {
-        if (!movie) return res.status(404).send('no such genre');
-        res.status(200).json(movie.genre);
+    await Movies.find({ 'genre.name': req.params.genreName })
+      .then((movies) => {
+        if (!movies)
+          return res
+            .status(404)
+            .send('No movies found under the genre ' + req.params.genreName);
+        res.status(200).json(movies);
       })
       .catch((err) => res.status(500).send('Error: ' + err));
   }
 );
-//==================================================
-//=======ASK RENISH WHAT IS BETTER??================
-//===================================================
-// app.get(
-//   '/genres/:genreName',
-//   passport.authenticate('jwt', { session: false }),
-//   async (req, res) => {
-//     try {
-//       const genre = await Genres.findOne({
-//         name: req.params.genreName,
-//       });
 
-//       if (!genre) {
-//         return res.status(404).send('no such genre');
-//       }
-
-//       res.status(200).json(genre);
-//     } catch (err) {
-//       res.status(500).send('Error: ' + err.message);
-//     }
-//   }
-// );
-
-// ------------Get direcor by name----------------------
+// ------------Get Movies by director Name----------------------
 app.get(
   '/movies/director/:directorName',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    await Movies.findOne({ 'director.name': req.params.directorName })
-      .then((movie) => {
-        if (!movie) return res.status(404).send('no such director');
-        res.status(200).json(movie.director);
+    await Movies.find({ 'director.name': req.params.directorName })
+      .then((movies) => {
+        if (movies.length === 0)
+          return res
+            .status(404)
+            .send(
+              'No movies found under the director ' + req.params.directorName
+            );
+        res.status(200).json(movies);
       })
       .catch((err) => res.status(500).send('Error: ' + err));
   }
 );
 
-/* ================= ACTORS (NEW ENDPOINT) ================= */
-
-// ------------Get actor by name----------------------
+// ------------Get Movies by actor name----------------------
 app.get(
   '/movies/actors/:actorName',
   passport.authenticate('jwt', { session: false }),
@@ -336,12 +386,11 @@ app.get(
     await Movies.find({ actors: req.params.actorName })
       .then((movies) => {
         if (movies.length === 0) {
-          return res.status(404).send('no such actor');
+          return res
+            .status(404)
+            .send('No movies found under the actor ' + req.params.actorName);
         }
-        res.status(200).json({
-          actor: req.params.actorName,
-          movies: movies.map((movie) => movie.title),
-        });
+        res.status(200).json(movies);
       })
       .catch((err) => res.status(500).send('Error: ' + err));
   }
@@ -361,6 +410,40 @@ app.get(
   }
 );
 
+// -----------get genre by name--------------
+app.get(
+  '/genre/:genreName',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    await Movies.findOne({ 'genre.name': req.params.genreName })
+      .then((movie) => {
+        if (!movie)
+          return res
+            .status(404)
+            .send('No such genre found ' + req.params.genreName);
+        res.status(200).json(movie.genre);
+      })
+      .catch((err) => res.status(500).send('Error: ' + err));
+  }
+);
+
+// -----------get director by name--------------
+app.get(
+  '/director/:directorName',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    await Movies.findOne({ 'director.name': req.params.directorName })
+      .then((movie) => {
+        if (!movie)
+          return res
+            .status(404)
+            .send('No such director found ' + req.params.directorName);
+        res.status(200).json(movie.director);
+      })
+      .catch((err) => res.status(500).send('Error: ' + err));
+  }
+);
+
 /* ================= ERROR HANDLER ================= */
 
 app.use((err, req, res, next) => {
@@ -368,6 +451,11 @@ app.use((err, req, res, next) => {
   res.status(500).send('Oh no! There is a problem');
 });
 
-app.listen(8080, () => {
-  console.log('Your app is listening on port 8080.');
+// app.listen(8080, () => {
+//   console.log('Your app is listening on port 8080.');
+// });
+const port = process.env.PORT || 8080;
+
+app.listen(port, '0.0.0.0', () => {
+  console.log('Listening on Port ' + port);
 });
