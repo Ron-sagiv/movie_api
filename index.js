@@ -5,49 +5,16 @@ const express = require('express'),
   Models = require('./models.js');
 const { check, validationResult } = require('express-validator');
 
+// Load Environment Variables
+const dotenv = require('dotenv');
+dotenv.config();
+
 const Movies = Models.Movie;
 const Users = Models.User;
-// keep models explicit even if not yet used
-const Genres = Models.Genre;
-const Actors = Models.Actor;
-const Directors = Models.Director;
-
-mongoose.connect('mongodb://localhost:27017/moviesDB');
-
-const app = express();
-app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({ extended: true })); Do I need this???
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(morgan('common'));
-app.use(express.static('public'));
-
-const cors = require('cors');
-app.use(cors());
-//===============================================================
-//====not sure if to use at the moment (check the websites in the first row)=========
-//================use instead of the row above:app.use(cors());=========
-// let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
-
-// app.use(cors({
-//   origin: (origin, callback) => {
-//     if(!origin) return callback(null, true);
-//     if(allowedOrigins.indexOf(origin) === -1){
-//       let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
-//       return callback(new Error(message ), false);
-//     }
-//     return callback(null, true);
-//   }
-// }));
-//====================end of defining origins code
-let auth = require('./auth')(app); //import auth.js file
-const passport = require('passport');
-//-----------------
-app.get('/', (req, res) => {
-  res.json({ msg: 'Welcome to my movie app!' });
-});
 
 // ------------Is DB connected-----------------
+// mongoose.connect('mongodb://localhost:27017/moviesDB');
+mongoose.connect(process.env.CONNECTION_URI);
 mongoose.connection.on('connected', () => {
   console.log(' Mongoose connected to moviesDB');
 });
@@ -58,6 +25,26 @@ mongoose.connection.on('error', (err) => {
 
 mongoose.connection.on('disconnected', () => {
   console.log(' Mongoose disconnected');
+});
+
+// Express App Init
+const app = express();
+app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({ extended: true })); Do I need this???
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan('common'));
+app.use(express.static('public'));
+
+// CORS Setting
+const cors = require('cors');
+app.use(cors());
+
+let auth = require('./auth')(app); //import auth.js file
+const passport = require('passport');
+//-----------------
+app.get('/', (req, res) => {
+  res.json({ msg: 'Welcome to my movie app!' });
 });
 
 /* ================= USERS ROUTES ================= */
