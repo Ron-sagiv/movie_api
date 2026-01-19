@@ -69,7 +69,7 @@ app.post(
     check('userName', 'userName is required').isLength({ min: 5 }),
     check(
       'userName',
-      'userName contains non alphanumeric characters - not allowed.'
+      'userName contains non alphanumeric characters - not allowed.',
     ).isAlphanumeric(),
     check('password', 'password is required').not().isEmpty(),
     check('email', 'Email does not appear to be valid').isEmail(),
@@ -108,7 +108,7 @@ app.post(
         console.error(error);
         res.status(500).send('Error: ' + error);
       });
-  }
+  },
 );
 
 // ---------------Get all users---NEW-------------
@@ -124,7 +124,7 @@ app.get(
         console.error(err);
         res.status(500).send('Error: ' + err);
       });
-  }
+  },
 );
 
 // -------Get a user by username----NEW---------------------------
@@ -140,7 +140,7 @@ app.get(
         console.error(err);
         res.status(500).send('Error: ' + err);
       });
-  }
+  },
 );
 
 // ----------Update a user's info, by username-----NEW-------------
@@ -152,7 +152,7 @@ app.put(
     check('userName', 'userName is required').isLength({ min: 5 }),
     check(
       'userName',
-      'userName contains non alphanumeric characters - not allowed.'
+      'userName contains non alphanumeric characters - not allowed.',
     ).isAlphanumeric(),
     check('password', 'password is required').not().isEmpty(),
     check('email', 'Email does not appear to be valid').isEmail(),
@@ -181,7 +181,7 @@ app.put(
             birthday: req.body.birthday, // keep schema casing consistent
           },
         },
-        { new: true }
+        { new: true },
       );
 
       if (!updatedUser) {
@@ -193,7 +193,7 @@ app.put(
       console.error(error);
       res.status(500).send('Error: ' + error);
     }
-  }
+  },
 );
 
 ///------------------------------------------------------------
@@ -208,7 +208,7 @@ app.post(
       {
         $push: { favoriteMovies: req.params.MovieID },
       },
-      { new: true }
+      { new: true },
     )
       .then((updatedUser) => {
         res.json(updatedUser);
@@ -217,7 +217,7 @@ app.post(
         console.error(err);
         res.status(500).send('Error: ' + err);
       });
-  }
+  },
 );
 
 // Delete favorite movie from user by movie id------NEW-------
@@ -228,7 +228,7 @@ app.delete(
     await Users.findOneAndUpdate(
       { userName: req.params.userName },
       { $pull: { favoriteMovies: req.params.movieId } },
-      { new: true }
+      { new: true },
     )
       .then((updatedUser) => {
         if (!updatedUser) {
@@ -240,7 +240,7 @@ app.delete(
         console.error(err);
         res.status(500).send('Error: ' + err);
       });
-  }
+  },
 );
 
 // --------------Delete a user by username---NEW----
@@ -268,7 +268,7 @@ app.delete(
       console.error(err);
       res.status(500).send('Error: ' + err.message);
     }
-  }
+  },
 );
 
 /* ================= MOVIES ROUTES ================= */
@@ -276,7 +276,7 @@ app.delete(
 // -------------get movies with jwt auth------------
 app.get(
   '/movies',
-  // passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     await Movies.find()
       .then((movies) => {
@@ -285,7 +285,7 @@ app.get(
       .catch((err) => {
         res.status(500).send('Error: ' + err);
       });
-  }
+  },
 );
 
 // -----------get Movies by genre name--------------
@@ -302,7 +302,7 @@ app.get(
         res.status(200).json(movies);
       })
       .catch((err) => res.status(500).send('Error: ' + err));
-  }
+  },
 );
 
 // ------------Get Movies by director Name----------------------
@@ -316,12 +316,12 @@ app.get(
           return res
             .status(404)
             .send(
-              'No movies found under the director ' + req.params.directorName
+              'No movies found under the director ' + req.params.directorName,
             );
         res.status(200).json(movies);
       })
       .catch((err) => res.status(500).send('Error: ' + err));
-  }
+  },
 );
 
 // ------------Get Movies by actor name----------------------
@@ -339,7 +339,7 @@ app.get(
         res.status(200).json(movies);
       })
       .catch((err) => res.status(500).send('Error: ' + err));
-  }
+  },
 );
 
 // ------------Get movie by title----------------------
@@ -353,7 +353,7 @@ app.get(
         res.status(200).json(movie);
       })
       .catch((err) => res.status(500).send('Error: ' + err));
-  }
+  },
 );
 
 // -----------get genre by name--------------
@@ -370,7 +370,7 @@ app.get(
         res.status(200).json(movie.genre);
       })
       .catch((err) => res.status(500).send('Error: ' + err));
-  }
+  },
 );
 
 // -----------get director by name--------------
@@ -387,7 +387,7 @@ app.get(
         res.status(200).json(movie.director);
       })
       .catch((err) => res.status(500).send('Error: ' + err));
-  }
+  },
 );
 
 /* ================= ERROR HANDLER ================= */
